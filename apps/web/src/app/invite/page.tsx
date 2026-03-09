@@ -1,0 +1,8 @@
+export default function Page() {
+  return (
+    <div>
+      <h1>Invite</h1>
+      <p>This screen is scaffolded for Kinlink with calm UX, explicit access boundaries, and diagnostics-first messaging.</p>
+    </div>
+  );
+}
