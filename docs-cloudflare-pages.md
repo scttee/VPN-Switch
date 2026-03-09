@@ -108,3 +108,21 @@ These are already captured in `apps/web/wrangler.toml`:
 - Protect production branch with required checks.
 - Keep API and web deployments versioned together in release notes.
 
+
+
+## Troubleshooting this exact Cloudflare error
+
+If you see:
+
+- `It looks like you're trying to use TypeScript but do not have the required package(s) installed`
+- `wrangler.toml ... does not appear to be valid ... contains the pages_build_output_dir property`
+
+check the following:
+
+1. Deploy from a commit that includes:
+   - `apps/web/package.json` with `typescript`, `@types/node`, `@types/react`, `@types/react-dom`.
+   - `apps/web/wrangler.toml` with `pages_build_output_dir = ".vercel/output/static"`.
+2. In Pages, ensure **Root directory** is `apps/web`.
+3. Re-run deployment after clearing build cache once.
+
+If your deploy log still shows an older commit SHA (for example `e5b833c...`), your Pages project is building an old branch/commit. Update the production branch or trigger deploy from the latest commit.
