@@ -1,0 +1,20 @@
+{
+  "name": "@kinlink/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:cf": "next build && npx @cloudflare/next-on-pages",
+    "preview:cf": "wrangler pages dev .vercel/output/static --compatibility-date=2026-03-09"
+  },
+  "dependencies": {
+    "next": "15.0.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.6",
+    "wrangler": "^3.114.0"
+  }
+}
