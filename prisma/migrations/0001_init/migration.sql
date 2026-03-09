@@ -1,0 +1,2 @@
+-- Migration SQL should be generated with `npm run prisma:migrate` against your Postgres DATABASE_URL.
+-- This placeholder exists so repository structure is present before first environment-specific migration run.

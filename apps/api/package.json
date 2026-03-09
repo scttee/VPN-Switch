@@ -1,0 +1,14 @@
+{
+  "name": "@kinlink/api",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@kinlink/shared": "0.1.0",
+    "zod": "^3.24.1",
+    "@prisma/client": "^6.1.0"
+  }
+}
