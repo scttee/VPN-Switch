@@ -52,3 +52,59 @@ npm --workspace @kinlink/web run preview:cf
 ## Important architectural note
 
 Kinlink's future real-time diagnostics and device status features may rely on websockets/SSE and background workers. Pages + Workers support this pattern, but your current `apps/api` should be considered a separate deploy target until migrated.
+
+
+## Best-practice Cloudflare settings (recommended)
+
+Use these in **Cloudflare Pages → Settings** for the `apps/web` project.
+
+### Build & deployments
+
+- **Production branch:** `main` (or your stable release branch)
+- **Framework preset:** `None` (use explicit command below)
+- **Root directory:** `apps/web`
+- **Build command:** `npm run build:cf`
+- **Build output directory:** `.vercel/output/static`
+- **Node.js version:** `22`
+- **Build system:** latest available (v2)
+
+### Environment variables
+
+Set for both **Production** and **Preview** environments:
+
+If your Pages project installs production deps only, keep TypeScript build packages in the web app dependencies (`typescript`, `@types/node`, `@types/react`, `@types/react-dom`) so `next build` can type-check successfully.
+
+- `NEXT_PUBLIC_API_BASE_URL=https://api.your-domain.tld`
+
+Optional hardening/ops flags you can add later:
+
+- `NEXT_TELEMETRY_DISABLED=1`
+
+### Compatibility/runtime
+
+These are already captured in `apps/web/wrangler.toml`:
+
+- `compatibility_date = "2026-03-09"`
+- `compatibility_flags = ["nodejs_compat"]`
+- `pages_build_output_dir = ".vercel/output/static"`
+
+### Domains & TLS
+
+- Attach `app.your-domain.tld` to the Pages project.
+- Point API to `api.your-domain.tld` on a separate deployment target.
+- Keep **Always Use HTTPS** enabled in Cloudflare.
+- Keep **Automatic HTTPS Rewrites** enabled.
+
+### Caching & security
+
+- Start with default Cloudflare caching for HTML (no aggressive edge cache rules for dynamic app routes).
+- Add a WAF managed ruleset on your API domain.
+- Restrict API CORS to your app origin(s) only.
+- Configure rate limits on API auth/invite endpoints.
+
+### CI/CD operational tips
+
+- Enable preview deployments for all PRs.
+- Protect production branch with required checks.
+- Keep API and web deployments versioned together in release notes.
+

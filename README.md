@@ -43,7 +43,7 @@ If you plan to host Kinlink on Cloudflare:
 - `apps/web` (Next.js) is compatible with **Cloudflare Pages** via `@cloudflare/next-on-pages`.
 - `apps/api` is currently a standalone Node server and should be deployed separately (or migrated to Workers).
 
-See `docs-cloudflare-pages.md` for exact setup steps and environment configuration.
+See `docs-cloudflare-pages.md` for exact setup steps, best-practice Pages settings, and production hardening recommendations.
 
 ## Local development
 

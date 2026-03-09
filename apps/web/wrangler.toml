@@ -1,7 +1,4 @@
 name = "kinlink-web"
 compatibility_date = "2026-03-09"
 compatibility_flags = ["nodejs_compat"]
-
-[assets]
-directory = ".vercel/output/static"
-binding = "ASSETS"
+pages_build_output_dir = ".vercel/output/static"
