@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  memberships Membership[]
+  devices   Device[]
+}
+
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  memberships Membership[]
+  invites     Invite[]
+  devices     Device[]
+  resources   Resource[]
+  policies    AccessPolicy[]
+  dnsRecords  DnsRecord[]
+  auditEvents AuditEvent[]
+}
+
+model Membership {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        String
+  createdAt   DateTime @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model Invite {
+  id          String   @id @default(cuid())
+  workspaceId String
+  email       String
+  role        String
+  token       String   @unique
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+model Device {
+  id             String   @id @default(cuid())
+  workspaceId    String
+  userId         String
+  name           String
+  platform       String
+  publicKey      String
+  overlayIpv4    String
+  overlayIpv6    String?
+  hostname       String
+  status         String
+  isSubnetRouter Boolean  @default(false)
+  relayOnly      Boolean  @default(false)
+  lastSeenAt     DateTime?
+  createdAt      DateTime @default(now())
+  workspace      Workspace @relation(fields: [workspaceId], references: [id])
+  user           User      @relation(fields: [userId], references: [id])
+  resources      Resource[]
+}
+
+model Resource {
+  id            String   @id @default(cuid())
+  workspaceId   String
+  deviceId      String
+  ownerUserId   String
+  type          String
+  name          String
+  description   String
+  icon          String
+  publishedName String
+  localTarget   String
+  visibility    String
+  createdAt     DateTime @default(now())
+  workspace     Workspace @relation(fields: [workspaceId], references: [id])
+  device        Device    @relation(fields: [deviceId], references: [id])
+  photoCollection PhotoCollection?
+}
+
+model PhotoCollection {
+  id             String   @id @default(cuid())
+  resourceId     String   @unique
+  coverImagePath String?
+  itemCount      Int
+  lastIndexedAt  DateTime?
+  syncMode       String
+  resource       Resource @relation(fields: [resourceId], references: [id])
+}
+
+model AccessPolicy {
+  id               String   @id @default(cuid())
+  workspaceId      String
+  subjectType      String
+  subjectIdOrValue String
+  action           String
+  resourceId       String?
+  destinationCidr  String?
+  protocol         String?
+  portRange        String?
+  priority         Int
+  expiresAt        DateTime?
+  createdAt        DateTime @default(now())
+  workspace        Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+model RouteAdvertisement {
+  id          String   @id @default(cuid())
+  deviceId    String
+  cidr        String
+  approved    Boolean
+  description String
+  metric      Int
+  createdAt   DateTime @default(now())
+}
+
+model DnsRecord {
+  id          String   @id @default(cuid())
+  workspaceId String
+  hostname    String
+  resourceId  String?
+  deviceId    String?
+  status      String
+  createdAt   DateTime @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+model ConnectionSession {
+  id          String   @id @default(cuid())
+  srcDeviceId String
+  dstDeviceId String?
+  via         String
+  handshakeAt DateTime
+  latencyMs   Int?
+  bytesIn     BigInt
+  bytesOut    BigInt
+  status      String
+}
+
+model AuditEvent {
+  id            String   @id @default(cuid())
+  workspaceId   String
+  actorUserId   String?
+  actorDeviceId String?
+  type          String
+  targetType    String
+  targetId      String
+  metadataJson  Json
+  createdAt     DateTime @default(now())
+  workspace     Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+model RecoveryToken {
+  id          String   @id @default(cuid())
+  userId      String
+  token       String   @unique
+  expiresAt   DateTime
+  consumedAt  DateTime?
+}

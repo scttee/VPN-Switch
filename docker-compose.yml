@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: kinlink
+      POSTGRES_PASSWORD: kinlink
+      POSTGRES_DB: kinlink
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: bash -lc "npm install && npm --workspace @kinlink/api run dev"
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+
+  web:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: bash -lc "npm install && npm --workspace @kinlink/web run dev"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
