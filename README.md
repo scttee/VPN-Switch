@@ -90,6 +90,31 @@ Recommended setup for two homes:
 
 Important: Kinlink gives a local-feeling routed overlay for approved resources; it does not claim full same-Wi-Fi/layer-2 behavior across homes.
 
+
+## Fast path: two-person usable flow (you + your brother)
+
+1. Run API (`apps/api`) and web (`apps/web`).
+2. You open **Onboarding Wizard** and:
+   - sign up,
+   - log in,
+   - create workspace.
+3. Copy your auth token + workspace ID.
+4. Open **Invite Flow**, create invite for your brother's email, copy invite token.
+5. Your brother signs up/logs in (same app), then opens **Invite Flow** and accepts invite token.
+6. Both users can call `/resources/me` with their auth token to view workspace resources.
+
+Current implementation note: API now uses Prisma models and is intended for PostgreSQL-backed persistence once `DATABASE_URL` and migrations are applied.
+
+
+### Fast path improvements in this build
+
+- Auth passwords are hashed with `scrypt` before storage.
+- Auth/workspace/invite/resource flows are implemented through Prisma-backed API routes.
+- Invite Flow can load pending invites for the logged-in user.
+- Shared Resources page can load API-backed resources using your saved auth token.
+- Invite acceptance now requires logged-in email to match invite email (safer two-person flow).
+- Added `/auth/me` and `/auth/logout` for session verification and sign-out.
+
 ## Known limitations
 
 - No full L2 LAN emulation; this project intentionally focuses on routed overlay access and explicit published resources.

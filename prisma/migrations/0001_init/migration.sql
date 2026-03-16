@@ -1,1 +1,2 @@
--- Initial schema placeholder; run `prisma migrate dev` to materialize SQL for your Postgres instance.
+-- Migration SQL should be generated with `npm run prisma:migrate` against your Postgres DATABASE_URL.
+-- This placeholder exists so repository structure is present before first environment-specific migration run.

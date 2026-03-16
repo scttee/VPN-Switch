@@ -15,6 +15,7 @@ model User {
   createdAt DateTime @default(now())
   memberships Membership[]
   devices   Device[]
+  apiSessions ApiSession[]
 }
 
 model Workspace {
@@ -32,13 +33,15 @@ model Workspace {
 }
 
 model Membership {
-  id          String   @id @default(cuid())
+  id          String   @id
   workspaceId String
   userId      String
   role        String
   createdAt   DateTime @default(now())
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([workspaceId, userId])
 }
 
 model Invite {
@@ -75,7 +78,7 @@ model Device {
 model Resource {
   id            String   @id @default(cuid())
   workspaceId   String
-  deviceId      String
+  deviceId      String?
   ownerUserId   String
   type          String
   name          String
@@ -86,7 +89,7 @@ model Resource {
   visibility    String
   createdAt     DateTime @default(now())
   workspace     Workspace @relation(fields: [workspaceId], references: [id])
-  device        Device    @relation(fields: [deviceId], references: [id])
+  device        Device?   @relation(fields: [deviceId], references: [id])
   photoCollection PhotoCollection?
 }
 
@@ -160,6 +163,14 @@ model AuditEvent {
   metadataJson  Json
   createdAt     DateTime @default(now())
   workspace     Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+model ApiSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model RecoveryToken {
